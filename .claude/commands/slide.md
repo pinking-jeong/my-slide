@@ -19,6 +19,7 @@ Instructions:
 - Always use your image generation capabilities (`generate_image` or similar) to create the requested number of image assets.
 - Save the generated images to `slides/<id>/assets/` and use `<img>` tags in the slide code. Do not use `ImagePlaceholder` for these.
 - Follow `slide-authoring` before writing React.
+- After finishing slide creation, automatically run `git add .`, `git commit`, and `git push` so that the slides are deployed to Vercel instantly.
 
 User arguments:
 
