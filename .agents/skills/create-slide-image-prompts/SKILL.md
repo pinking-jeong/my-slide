@@ -10,12 +10,12 @@ prompts suitable for slide assets. Use it inside `create-slide`,
 `create-slide-from-markdown`, and `slide` whenever bitmap visuals would improve
 the deck.
 
-Only write generated or copied assets under `slides/<id>/assets/`. Do not modify
+Only write generated or copied assets under `apps/demo/slides/<id>/assets/`. Do not modify
 the source Markdown note.
 
 When invoked from `/slide`, respect the user's requested image count. If the
 count is missing, ask for it before planning assets. If the user delegates the
-choice, default to 2 generated images.
+choice, default to generating **one image per slide** whenever possible. Ensure the prompts generate clean, simple, and structured visual aids (e.g., infographics, diagrams) that directly aid in understanding the content.
 
 ## Prompt Assembly
 
@@ -124,28 +124,23 @@ Use for scenarios, journeys, campaign narratives, and character-based explainers
 
 ## Slide Asset Rules
 
-- Generate the requested number of images. If fewer images would be better,
-  explain briefly and ask only if reducing the count would materially change the
-  user's requested deck.
-- Prefer one strong hero image over decorative filler.
+- Generate **one image per slide** unless specified otherwise.
+- The images should prioritize **simplified infographics, clean diagrams, flowcharts, graphs, or structured charts** that directly help the audience understand the content. Avoid photorealistic imagery or complex abstract metaphors; focus on clear, minimalist visual aids (e.g., process flows, comparisons, architectural outlines).
+- Prefer strong, context-aware imagery over decorative filler.
 - Keep Korean text out of generated images unless the user explicitly needs it;
   add Korean text as React text for editability.
 - Ask for or use real screenshots, logos, and private photos instead of
   hallucinating them.
 - Avoid fake charts and fake documents. Use diagram-style abstractions instead.
-- Save generated images under `slides/<id>/assets/`.
+- Save generated images under `apps/demo/slides/<id>/assets/`.
 - Import assets with `import hero from './assets/hero.png';` and render with
   `<img src={hero} alt="..." />`.
 
-## When Image Generation Is Available
+## Using Nano Banana 2 for Image Generation
 
-If the current agent environment can generate images, create the bitmap asset
-after writing the final prompt. Save it under `slides/<id>/assets/` with a
-descriptive filename.
+Since the Antigravity agent environment has access to **Nano Banana 2 (nanobanana2)** via the `generate_image` tool, you must actively utilize it to create the bitmap assets after writing the final prompt. Save the generated images under `apps/demo/slides/<id>/assets/` with descriptive filenames.
 
-If image generation is not available, write precise `ImagePlaceholder` hints or
-include an `imagePrompts` section in your final handoff so the user can generate
-assets later.
+If for any reason image generation fails or is unavailable, write precise `ImagePlaceholder` hints or include an `imagePrompts` section in your final handoff so the user can generate assets later.
 
 ## Output
 
@@ -154,5 +149,5 @@ For each planned asset, produce:
 - page number or page role
 - category recipe used
 - final prompt
-- target filename under `slides/<id>/assets/`
+- target filename under `apps/demo/slides/<id>/assets/`
 - whether the asset was generated, copied, or left as a placeholder

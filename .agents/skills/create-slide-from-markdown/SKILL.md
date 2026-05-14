@@ -8,7 +8,7 @@ description: Use this skill when the user gives a Markdown or Obsidian note path
 This workflow turns a local `.md` note into an open-slide deck. It extends
 `create-slide`; when writing React, follow `slide-authoring`.
 
-You only write files under `slides/<id>/`. Never modify the source note.
+You only write files under `apps/demo/slides/<id>/`. Never modify the source note.
 
 ## Inputs
 
@@ -25,12 +25,10 @@ decisions before writing files:
 Ask concise questions when any value is missing. Recommended Korean prompt:
 
 ```text
-슬라이드 몇 장으로 만들까요? 생성 이미지는 몇 개 넣을까요? 테마는 무엇으로 할까요?
+슬라이드 몇 장으로 만들까요? 각 슬라이드마다 이미지를 생성할까요? 테마는 무엇으로 할까요?
 ```
 
-If the user asks the agent to decide automatically, use 8 pages and 2 generated
-images, and infer `auto` theme. If image generation is unavailable, treat the
-image count as the number of image placeholders/prompts to create.
+If the user asks the agent to decide automatically, use 8 pages and try to generate **one informative infographic/diagram per slide**, and infer `auto` theme. Always actively utilize the **Nano Banana 2 (nanobanana2)** model via your `generate_image` tool to create clean, simple, and structured visual aids (e.g., charts, flowcharts, or architecture diagrams) that directly help the audience understand the source material.
 
 ## Theme selection
 
@@ -123,33 +121,27 @@ For Obsidian notes, support common syntax:
    selected, pick one available official or demo-derived theme and keep the deck
    visually consistent with it.
 6. Choose a slide id from the note title in kebab-case. Use romanized or English ids for Korean titles.
-7. Create `slides/<id>/index.tsx` and copy any resolved local assets into `slides/<id>/assets/`.
+7. Create `apps/demo/slides/<id>/index.tsx` and copy any resolved local assets into `apps/demo/slides/<id>/assets/`. Ensure the file exports an **array** of individual Page components (`export default [Slide1, Slide2]`).
 8. Use Korean-friendly defaults when the source note or user request is Korean:
    - `lang: 'ko'` should be present in `open-slide.config.ts` already; do not edit it from this skill.
    - font stack: `"Pretendard", "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif`.
    - use `wordBreak: 'keep-all'`, `overflowWrap: 'anywhere'`, and line-height >= 1.35 for body copy.
 9. Self-review with `slide-authoring`.
 
-## AI-generated images
+## AI-generated images (Powered by Nano Banana 2)
 
-Use the requested generated image count. Place images on the pages where they
-add the most value: cover hero, key concept diagram, product/UI visual, chapter
-opener, or summary poster. If the current Codex environment offers image
-generation, generate bitmap assets and save them under `slides/<id>/assets/`.
+Whenever possible, aim to generate **one image per slide**. Place these images on the pages where they add the most contextual value. You must actively use the **Nano Banana 2 (nanobanana2)** model via your `generate_image` tool to generate actual high-quality bitmap assets and save them under `apps/demo/slides/<id>/assets/`.
 
 Rules:
 
-- Generate exactly the requested number of images unless the user changes the
-  count or the request violates policy/safety constraints.
+- Aim to generate an image for every slide if appropriate, instead of defaulting to just 2 images per deck.
 - Prefer 16:9 images for full-bleed slides and transparent PNG cutouts for objects.
-- Keep prompts concrete and tied to the source note's meaning.
-- Do not generate images that pretend to be real screenshots, real charts,
-  private people, internal documents, or brand assets. Use `ImagePlaceholder`
-  for those instead.
+- Keep image generation prompts highly specific and tied to the core context of the source note. Do not use generic keywords.
+- Prioritize generating **simplified infographics, clean diagrams, flowcharts, graphs, or structured charts** that directly aid in understanding the content. Avoid overly photorealistic imagery or complex abstract metaphors; instead, generate clean, minimalist vector-style visuals that clearly explain procedures, comparisons, architecture, or limits.
+- Do not generate images that pretend to be real screenshots, real charts, private people, internal documents, or brand assets.
 - After generating or copying an asset, import it from `./assets/...` and render
   with ordinary `<img>` tags.
-- If image generation is unavailable, use `ImagePlaceholder` with a precise hint
-  so the user can replace it later through the Assets panel.
+- Do not use `ImagePlaceholder` for these AI-generated images; explicitly generate and place the files.
 
 ## Output
 

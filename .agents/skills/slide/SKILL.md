@@ -12,7 +12,7 @@ This skill delegates the content workflow to `create-slide-from-markdown`, the
 technical slide-writing rules to `slide-authoring`, and image prompt generation
 to `create-slide-image-prompts`.
 
-You only write files under `slides/<id>/`. Never modify the source Markdown note.
+You only write files under `apps/demo/slides/<id>/`. Never modify the source Markdown note.
 
 ## Invocation
 
@@ -102,8 +102,8 @@ multiple-choice question. Use these theme options:
    - parse frontmatter, headings, callouts, wikilinks, embeds, image links
    - infer title, thesis, sections, audience, and key claims
    - pick a short kebab-case slide id
-   - create `slides/<id>/index.tsx`
-   - copy referenced local assets into `slides/<id>/assets/`
+   - create `apps/demo/slides/<id>/index.tsx` (ensure you export an array of components `export default [Slide1, Slide2]`)
+   - copy referenced local assets into `apps/demo/slides/<id>/assets/`
 4. Follow `slide-authoring` for the React implementation:
    - 1920 x 1080 canvas discipline
    - one idea per page
@@ -128,7 +128,7 @@ multiple-choice question. Use these theme options:
    - UI mockups
    - chapter artwork
 6. If Codex or the current environment can generate bitmap images, generate the
-   requested assets and save them under `slides/<id>/assets/`. Otherwise, add
+   requested assets and save them under `apps/demo/slides/<id>/assets/`. Otherwise, add
    `ImagePlaceholder` components with precise hints and include final prompts in
    the handoff.
 7. Self-review:

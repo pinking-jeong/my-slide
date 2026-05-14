@@ -1,11 +1,11 @@
 ---
 name: slide-authoring
-description: Technical reference for writing or editing open-slide pages — file contract, 1920×1080 canvas, type scale, layout, palette/visual direction, and assets. Consult this whenever you are about to write or modify any file under `slides/<id>/`, including from inside the `create-slide` or `apply-comments` workflows, or for any ad-hoc slide edit. Triggers on phrases like "edit slide", "tweak this page", "fix the layout", "change the palette", "investigate the slide framework", "how do slides work here".
+description: Technical reference for writing or editing open-slide pages — file contract, 1920×1080 canvas, type scale, layout, palette/visual direction, and assets. Consult this whenever you are about to write or modify any file under `apps/demo/slides/<id>/`, including from inside the `create-slide` or `apply-comments` workflows, or for any ad-hoc slide edit. Triggers on phrases like "edit slide", "tweak this page", "fix the layout", "change the palette", "investigate the slide framework", "how do slides work here".
 ---
 
 # Authoring open-slide pages
 
-This skill is the **technical reference** for everything that happens inside `slides/<id>/index.tsx`. It does not own a workflow:
+This skill is the **technical reference** for everything that happens inside `apps/demo/slides/<id>/index.tsx`. It does not own a workflow:
 
 - `create-slide` owns "draft a new deck" — it asks the user scoping questions, then delegates the *how* to this skill.
 - `apply-comments` owns "process inspector markers" — it finds markers and applies edits, but the edits themselves follow the rules here.
@@ -15,8 +15,9 @@ When any of those paths reach the point of *writing React code for a page*, this
 
 ## Hard rules
 
-- Put the slide under `slides/<kebab-case-id>/`.
-- Entry is `slides/<id>/index.tsx`. Images/videos/fonts go under `slides/<id>/assets/`.
+- Put the slide under `apps/demo/slides/<kebab-case-id>/`.
+- Entry is `apps/demo/slides/<id>/index.tsx`. Images/videos/fonts go under `apps/demo/slides/<id>/assets/`.
+- **CRITICAL**: You MUST export an array of components `export default [Slide1, Slide2]`. DO NOT export a single component that returns multiple slides.
 - Do **not** touch `package.json`, `open-slide.config.ts`, or other slides.
 - Do not add dependencies. Only `react` and standard web APIs are available.
 - Do not create `README.md` or other prose files inside the slide folder — just `index.tsx` + `assets/`.
@@ -24,7 +25,7 @@ When any of those paths reach the point of *writing React code for a page*, this
 ## File contract
 
 ```tsx
-// slides/<id>/index.tsx
+// apps/demo/slides/<id>/index.tsx
 import type { Page, SlideMeta } from '@open-slide/core';
 
 const Cover: Page = () => <div>…</div>;
@@ -34,7 +35,7 @@ export const meta: SlideMeta = { title: 'My slide' };
 export default [Cover, Body] satisfies Page[];
 ```
 
-- `export default` is a **non-empty array of zero-prop React components**, one per page, in order.
+- **CRITICAL**: `export default` MUST be a **non-empty array of zero-prop React components**, one per page, in order. Do NOT export a single unified component that returns multiple slides inside a fragment (`<>...</>`).
 - `meta.title` (optional) shows in the slide header. Default is the folder name.
 - The slide id is the kebab-case folder name. Pick something short and descriptive (`q2-roadmap`, `team-offsite-2026`).
 
@@ -229,13 +230,15 @@ export default [Cover, Content] satisfies Page[];
 
 ## Assets
 
-Place files under `slides/<id>/assets/`. Import them as ES modules:
+Place files under `apps/demo/slides/<id>/assets/`. Import them as ES modules:
 
 ```tsx
 import hero from './assets/hero.jpg';
 // …
-<img src={hero} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+<img src={hero} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
 ```
+
+**Image Resizing Rule:** Do NOT crop images. Always use `objectFit: 'contain'` (for `<img>` tags) or `backgroundSize: 'contain'` (for background images) so the entire original image is fully visible and resized to fit the slot perfectly without any parts getting cut off. Avoid using `cover`.
 
 For URL-only access:
 
@@ -265,7 +268,7 @@ Size the placeholder to the slot it occupies. Pass `width`/`height` when the lay
 
 ## Runtime behavior you get for free
 
-- Home page lists every folder under `slides/`.
+- Home page lists every folder under `apps/demo/slides/`.
 - Clicking a slide shows a left thumbnail rail, main page, prev/next, page counter.
 - Arrow keys / PageUp / PageDown navigate. `F` enters fullscreen play mode.
 - In play mode: Space/→ next, ← prev, Esc exit.
@@ -273,7 +276,7 @@ Size the placeholder to the slot it occupies. Pass `width`/`height` when the lay
 
 ## Self-review before finishing
 
-- [ ] `slides/<id>/index.tsx` `export default`s a non-empty `Page[]`.
+- [ ] `apps/demo/slides/<id>/index.tsx` `export default`s a non-empty `Page[]` (an array of individual components, not a single component).
 - [ ] Every page's root fills `100% × 100%`.
 - [ ] Content lives inside padding (no text kisses the edge).
 - [ ] **For every page, sum (font_size × line_height × lines) + gaps + 2×padding ≤ 1080px.** If close, split the page. No `overflow: auto` escape hatches.
@@ -281,9 +284,9 @@ Size the placeholder to the slot it occupies. Pass `width`/`height` when the lay
 - [ ] One coherent visual direction across every page (palette + type scale).
 - [ ] Slide declares a top-level `export const design: DesignSystem = { … }` and references the values via `var(--osd-X)` (use `design.X` only when you need a JS number for arithmetic). Only omit the `design` const for a one-off slide whose palette is intentionally locked.
 - [ ] One idea per page.
-- [ ] All imported assets exist on disk under `slides/<id>/assets/`.
+- [ ] All imported assets exist on disk under `apps/demo/slides/<id>/assets/`.
 - [ ] Every `<ImagePlaceholder>` corresponds to a real image the user must supply — not decorative filler. If it could be replaced by typography or layout, it should be.
-- [ ] Nothing outside `slides/<id>/` was edited.
+- [ ] Nothing outside `apps/demo/slides/<id>/` was edited.
 
 ## Anti-patterns
 

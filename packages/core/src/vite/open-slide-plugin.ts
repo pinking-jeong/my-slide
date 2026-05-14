@@ -66,7 +66,8 @@ function toId(absFile: string, slidesRoot: string): string {
 export function generateSlidesModule(files: string[], slidesRoot: string, isDev: boolean): string {
   const entries = files.map((abs) => {
     const id = toId(abs, slidesRoot);
-    const importPath = isDev ? `/@fs${abs}` : abs;
+    const normalized = abs.replace(/\\/g, '/');
+    const importPath = isDev ? `/@fs/${normalized.replace(/^\//, '')}` : normalized;
     return { id, importPath };
   });
 

@@ -16,8 +16,8 @@ Instructions:
 - Read the source note, but do not modify it.
 - Create the deck under `slides/<kebab-case-id>/index.tsx`.
 - Copy referenced local assets into `slides/<id>/assets/` when possible.
-- If image generation is available, use `create-slide-image-prompts` to create the requested number of image assets.
-- If image generation is unavailable, leave the requested number of precise `ImagePlaceholder` hints and report the prompts.
+- Always use your image generation capabilities (`generate_image` or similar) to create the requested number of image assets.
+- Save the generated images to `slides/<id>/assets/` and use `<img>` tags in the slide code. Do not use `ImagePlaceholder` for these.
 - Follow `slide-authoring` before writing React.
 
 User arguments:
