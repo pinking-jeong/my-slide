@@ -1,5 +1,0 @@
-{
-  "buildCommand": "cd apps/demo && pnpm run build",
-  "outputDirectory": "apps/demo/dist",
-  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
-}
